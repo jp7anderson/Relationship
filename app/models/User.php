@@ -9,19 +9,23 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
 	use UserTrait, RemindableTrait;
 
-	/**
-	 * The database table used by the model.
-	 *
-	 * @var string
-	 */
+	public $timestamps = false;
+
+	protected $fillable = ['username' , 'email', 'password'];
+	
 	protected $table = 'users';
 
-	/**
-	 * The attributes excluded from the model's JSON form.
-	 *
-	 * @var array
-	 */
 	protected $hidden = array('password', 'remember_token');
+
+	public static $erros;
+
+	public static $rules = [
+		'username' => 'required',
+		'email' => 'required',
+		'password' => 'required'
+	];
+
+
 
 	public function setPasswordAttribute($value)
 	{
@@ -36,6 +40,17 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	public static function byUsername($username)
 	{
 		return static::whereUsername($username)->first();
+	}
+
+	public static function isValid($data)
+	{
+		$validation = Validator::make($data, static::$rules);
+
+		if ($validation->passes()) return true;
+
+		static::$erros = $validation->messages();
+
+		return false;
 	}
 
 }

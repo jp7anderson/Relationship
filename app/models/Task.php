@@ -15,9 +15,11 @@ class Task extends BaseModel{
 
 	public function user()
 	{
+		//comparacao para saber se pertence a tabela
 		return $this->belongsTo('User');
 	}
 
+	//procurando usuarios pelo id e username
 	public static function find($id, $username = null)
 	{
 		$task = static::with('user')->find($id);
